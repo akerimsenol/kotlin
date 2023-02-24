@@ -2394,6 +2394,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierCheckerForInnerComponents.kt");
         }
 
+        @TestMetadata("RedundantVisibilityModifierCheckerWithExplicitApiMode.kt")
+        public void testRedundantVisibilityModifierCheckerWithExplicitApiMode() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierCheckerWithExplicitApiMode.kt");
+        }
+
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -4300,6 +4305,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
 
         public void testAllFilesPresentInTypes() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/types"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("bareWithDnnArg.kt")
+        public void testBareWithDnnArg() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/types/bareWithDnnArg.kt");
         }
 
         @TestMetadata("bareWithFlexibleArg.kt")

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -958,7 +957,7 @@ open class RawFirBuilder(
                 } else {
                     delegatedSuperTypeRef!!
                 }
-                val delegatedConstructorCall = {
+                buildOrLazyDelegatedConstructorCall(isThis = false, constructedTypeRef) {
                     buildDelegatedConstructorCall {
                         source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                         this.constructedTypeRef = constructedTypeRef
@@ -972,14 +971,6 @@ open class RawFirBuilder(
                         disabledLazyMode { superTypeCallEntry?.extractArgumentsTo(this) }
                     }
                 }
-                if (this == null && owner !is KtEnumEntry) {
-                    // primary constructor without body
-                    delegatedConstructorCall()
-                } else buildOrLazyDelegatedConstructorCall(
-                    isThis = false,
-                    constructedTypeRef,
-                    delegatedConstructorCall,
-                )
             }
 
             // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
@@ -1527,8 +1518,11 @@ open class RawFirBuilder(
         }
 
         private fun KtContractEffectList.extractRawEffects(destination: MutableList<FirExpression>) {
-            getExpressions()
-                .mapTo(destination) { it.accept(this@Visitor, Unit) as FirExpression }
+            getContractEffects().mapTo(destination) { effect ->
+                buildOrLazyExpression(effect.toFirSourceElement()) {
+                    effect.getExpression().accept(this@Visitor, Unit) as FirExpression
+                }
+            }
         }
 
         override fun visitLambdaExpression(expression: KtLambdaExpression, data: Unit): FirElement {

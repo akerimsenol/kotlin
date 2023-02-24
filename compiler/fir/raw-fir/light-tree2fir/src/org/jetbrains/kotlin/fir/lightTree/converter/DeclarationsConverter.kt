@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.lang.impl.PsiBuilderImpl
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
@@ -91,7 +92,12 @@ class DeclarationsConverter(
     private val expressionConverter = ExpressionsConverter(session, tree, this, context)
 
     override fun reportSyntaxError(node: LighterASTNode) {
-        diagnosticsReporter?.reportOn(node.toFirSourceElement(), FirSyntaxErrors.SYNTAX, diagnosticContext!!)
+        val message = PsiBuilderImpl.getErrorMessage(node)
+        if (message == null) {
+            diagnosticsReporter?.reportOn(node.toFirSourceElement(), FirSyntaxErrors.SYNTAX, diagnosticContext!!)
+        } else {
+            diagnosticsReporter?.reportOn(node.toFirSourceElement(), FirSyntaxErrors.SYNTAX_WITH_MESSAGE, message, diagnosticContext!!)
+        }
     }
 
     /**
@@ -1045,6 +1051,7 @@ class DeclarationsConverter(
             val (body, _) = convertFunctionBody(block, null, allowLegacyContractDescription = true)
             this.body = body
             context.firFunctionTargets.removeLast()
+            this.contextReceivers.addAll(convertContextReceivers(secondaryConstructor.getParent()!!.getParent()!!))
         }.also {
             it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
             target.bind(it)

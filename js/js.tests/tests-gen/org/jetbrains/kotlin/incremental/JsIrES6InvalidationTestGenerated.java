@@ -40,6 +40,11 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR_ES6, false);
     }
 
+    @TestMetadata("breakKlibBinaryCompatibilityWithVariance")
+    public void testBreakKlibBinaryCompatibilityWithVariance() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/breakKlibBinaryCompatibilityWithVariance/");
+    }
+
     @TestMetadata("circleExportsUpdate")
     public void testCircleExportsUpdate() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/circleExportsUpdate/");
@@ -253,6 +258,11 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
     @TestMetadata("jsModuleAnnotation")
     public void testJsModuleAnnotation() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotation/");
+    }
+
+    @TestMetadata("languageVersionSettings")
+    public void testLanguageVersionSettings() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/languageVersionSettings/");
     }
 
     @TestMetadata("localInlineFunction")

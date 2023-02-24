@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -60,7 +62,7 @@ open class AbstractSteppingTest : AbstractSteppingTestBase<ClassicFrontendOutput
     }
 }
 
-open class AbstractFirSteppingTest : AbstractSteppingTestBase<FirOutputArtifact, IrBackendInput>(
+open class AbstractFirSteppingTestBase(val parser: FirParser) : AbstractSteppingTestBase<FirOutputArtifact, IrBackendInput>(
     FrontendKinds.FIR,
     TargetBackend.JVM_IR
 ) {
@@ -76,5 +78,11 @@ open class AbstractFirSteppingTest : AbstractSteppingTestBase<FirOutputArtifact,
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureDumpHandlersForCodegenTest()
+        builder.configureFirParser(parser)
     }
 }
+
+open class AbstractFirLightTreeSteppingTest : AbstractFirSteppingTestBase(FirParser.LightTree)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiSteppingTest : AbstractFirSteppingTestBase(FirParser.Psi)

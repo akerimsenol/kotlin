@@ -35,7 +35,7 @@ plugins {
     id("jps-compatible")
     id("org.jetbrains.gradle.plugin.idea-ext")
     id("org.gradle.crypto.checksum") version "1.2.0"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.12.0" apply false
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.0" apply false
     signing
     id("org.jetbrains.kotlin.jvm") apply false
     id("org.jetbrains.kotlin.plugin.serialization") apply false
@@ -60,7 +60,7 @@ val kotlinVersion by extra(
     } ?: buildNumber
 )
 
-val kotlinLanguageVersion by extra("1.8")
+val kotlinLanguageVersion by extra("1.9")
 
 extra["kotlin_root"] = rootDir
 
@@ -109,7 +109,7 @@ IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
     // BEWARE! Bumping this version doesn't take an immediate effect on TeamCity: KTI-1107
-    extra["versions.kotlin-native"] = "1.9.0-dev-1261"
+    extra["versions.kotlin-native"] = "1.9.0-dev-2063"
 }
 
 val irCompilerModules = arrayOf(
@@ -219,6 +219,8 @@ val fe10CompilerModules = arrayOf(
     ":js:js.dce",
     ":native:frontend.native",
     ":native:kotlin-native-utils",
+    ":wasm:wasm.frontend",
+    ":wasm:wasm.config",
     ":kotlin-build-common",
     ":compiler:backend.common.jvm",
     ":analysis:decompiled:light-classes-for-decompiled-fe10",
@@ -667,6 +669,7 @@ tasks {
 
     register("wasmCompilerTest") {
         dependsOn(":wasm:wasm.tests:test")
+        dependsOn(":wasm:wasm.tests:diagnosticsTest")
         // Windows WABT release requires Visual C++ Redistributable
         if (!kotlinBuildProperties.isTeamcityBuild || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
             dependsOn(":wasm:wasm.ir:test")
@@ -682,18 +685,11 @@ tasks {
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
-        dependsOn(":compiler:fir:fir2ir:test")
+        dependsOn(":compiler:fir:fir2ir:aggregateTests")
     }
 
-    register("firAllTest") {
-        dependsOn(
-            ":dist",
-            ":compiler:fir:raw-fir:psi2fir:test",
-            ":compiler:fir:raw-fir:light-tree2fir:test",
-            ":compiler:fir:analysis-tests:test",
-            ":compiler:fir:analysis-tests:legacy-fir-tests:test",
-            ":compiler:fir:fir2ir:test",
-        )
+    register("nightlyFirCompilerTest") {
+        dependsOn(":compiler:fir:fir2ir:nightlyTests")
     }
 
     register("compilerFrontendVisualizerTest") {

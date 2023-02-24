@@ -8137,6 +8137,12 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
             }
 
             @Test
+            @TestMetadata("infiniteLoopInNextMeaningful.kt")
+            public void testInfiniteLoopInNextMeaningful() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/infiniteLoopInNextMeaningful.kt");
+            }
+
+            @Test
             @TestMetadata("inlineFunInGenericClass.kt")
             public void testInlineFunInGenericClass() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/inlineFunInGenericClass.kt");
@@ -14857,6 +14863,12 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
             @TestMetadata("falsePositiveBoundSmartcast.kt")
             public void testFalsePositiveBoundSmartcast() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedClassTypeParameterDeserialization.kt")
+            public void testNestedClassTypeParameterDeserialization() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/nestedClassTypeParameterDeserialization.kt");
             }
         }
 
@@ -23954,6 +23966,12 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55912.kt");
             }
 
+            @Test
+            @TestMetadata("kt56215.kt")
+            public void testKt56215() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt56215.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck")
             @TestDataPath("$PROJECT_ROOT")
@@ -24294,6 +24312,19 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
                 public void testVarAsFunctionCall() throws Exception {
                     runTest("compiler/testData/codegen/box/ir/serializationRegressions/varAsFunctionCall.kt");
                 }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/javaFieldAndKotlinProperty")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegenK2")
+        @UseExtTestCaseGroupProvider()
+        @K2Pipeline()
+        public class JavaFieldAndKotlinProperty {
+            @Test
+            public void testAllFilesPresentInJavaFieldAndKotlinProperty() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaFieldAndKotlinProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
         }
 
@@ -42194,6 +42225,12 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
             @TestMetadata("kt48230_2.kt")
             public void testKt48230_2() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/capture/kt48230_2.kt");
+            }
+
+            @Test
+            @TestMetadata("kt56500.kt")
+            public void testKt56500() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/capture/kt56500.kt");
             }
 
             @Test

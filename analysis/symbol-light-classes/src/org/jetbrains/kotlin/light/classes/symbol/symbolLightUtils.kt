@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import java.util.*
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
@@ -125,28 +126,18 @@ internal fun KtAnalysisSession.getTypeNullability(ktType: KtType): NullabilityTy
 
     if (ktType.isUnit) return NullabilityType.NotNull
 
+    if (ktType.isPrimitiveBacked) return NullabilityType.Unknown
+
     if (ktType is KtTypeParameterType) {
         if (ktType.isMarkedNullable) return NullabilityType.Nullable
         val subtypeOfNullableSuperType = ktType.symbol.upperBounds.all { upperBound -> upperBound.canBeNull }
         return if (!subtypeOfNullableSuperType) NullabilityType.NotNull else NullabilityType.Unknown
     }
-    if (ktType !is KtClassType) return NullabilityType.NotNull
-
-    if (!ktType.isPrimitive) {
-        return ktType.nullabilityType
-    }
-
     if (ktType !is KtNonErrorClassType) return NullabilityType.NotNull
     if (ktType.ownTypeArguments.any { it.type is KtClassErrorType }) return NullabilityType.NotNull
     if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return NullabilityType.NotNull
 
-    val canonicalSignature = ktType.mapTypeToJvmType().descriptor
-
-    if (canonicalSignature == "[L<error>;") return NullabilityType.NotNull
-
-    val isNotPrimitiveType = canonicalSignature.startsWith("L") || canonicalSignature.startsWith("[")
-
-    return if (isNotPrimitiveType) NullabilityType.NotNull else NullabilityType.Unknown
+    return ktType.nullabilityType
 }
 
 internal val KtType.isUnit get() = isClassTypeWithClassId(DefaultTypeClassIds.UNIT)
@@ -196,8 +187,8 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
 
         is KtEnumEntryAnnotationValue -> {
             val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
-            val psiExpression = PsiElementFactory.getInstance(parent.project).createExpressionFromText(fqName, parent)
-            SymbolPsiExpression(sourcePsi, parent, psiExpression)
+            val psiReference = PsiElementFactory.getInstance(parent.project).createReferenceFromText(fqName, parent)
+            SymbolPsiReference(sourcePsi, parent, psiReference)
         }
 
         KtUnsupportedAnnotationValue -> null
@@ -245,7 +236,10 @@ internal fun BitSet.copy(): BitSet = clone() as BitSet
 
 context(KtAnalysisSession)
 internal fun <T : KtSymbol> KtSymbolPointer<T>.restoreSymbolOrThrowIfDisposed(): T =
-    restoreSymbol() ?: error("${this::class} pointer already disposed")
+    restoreSymbol()
+        ?: buildErrorWithAttachment("${this::class} pointer already disposed") {
+            withEntry("pointer", this@restoreSymbolOrThrowIfDisposed) { it.toString() }
+        }
 
 internal fun hasTypeParameters(
     ktModule: KtModule,

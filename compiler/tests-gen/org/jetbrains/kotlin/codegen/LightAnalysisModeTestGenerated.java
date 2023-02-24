@@ -7927,6 +7927,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/indirectInlineUsedAsNonInline.kt");
         }
 
+        @TestMetadata("infiniteLoopInNextMeaningful.kt")
+        public void testInfiniteLoopInNextMeaningful() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/infiniteLoopInNextMeaningful.kt");
+        }
+
         @TestMetadata("inlineFunInGenericClass.kt")
         public void testInlineFunInGenericClass() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/inlineFunInGenericClass.kt");
@@ -14566,6 +14571,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("NameHighlighter.kt")
         public void testNameHighlighter() throws Exception {
             runTest("compiler/testData/codegen/box/fir/NameHighlighter.kt");
+        }
+
+        @TestMetadata("nestedClassTypeParameterDeserialization.kt")
+        public void testNestedClassTypeParameterDeserialization() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/nestedClassTypeParameterDeserialization.kt");
         }
 
         @TestMetadata("notFoundClasses.kt")
@@ -22167,6 +22177,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/simpleIndySam.kt");
             }
 
+            @TestMetadata("starProjectionSam.kt")
+            public void testStarProjectionSam() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/starProjectionSam.kt");
+            }
+
             @TestMetadata("streamApi1.kt")
             public void testStreamApi1() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/streamApi1.kt");
@@ -22882,6 +22897,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55912.kt");
         }
 
+        @TestMetadata("kt56215.kt")
+        public void testKt56215() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt56215.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -23193,6 +23213,19 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testVarAsFunctionCall() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/serializationRegressions/varAsFunctionCall.kt");
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/javaFieldAndKotlinProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JavaFieldAndKotlinProperty extends AbstractLightAnalysisModeTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJavaFieldAndKotlinProperty() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaFieldAndKotlinProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
     }
 
@@ -27072,6 +27105,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("expectInterfaceInSupertypes.kt")
             public void testExpectInterfaceInSupertypes() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectInterfaceInSupertypes.kt");
+            }
+
+            @TestMetadata("expectInterfaceInheritance.kt")
+            public void testExpectInterfaceInheritance() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectInterfaceInheritance.kt");
             }
 
             @TestMetadata("fakeOverridesInPlatformModule.kt")

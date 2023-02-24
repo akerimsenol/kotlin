@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 
 open class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -22,21 +21,17 @@ open class AbstractIrBlackBoxInlineCodegenTest : AbstractIrBlackBoxCodegenTest()
     }
 }
 
-open class AbstractFirBlackBoxInlineCodegenTest : AbstractFirBlackBoxCodegenTest() {
+open class AbstractFirLightTreeBlackBoxInlineCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
     }
 }
 
-open class AbstractFirLightTreeBlackBoxInlineCodegenTest : AbstractFirBlackBoxCodegenTest() {
+@FirPsiCodegenTest
+open class AbstractFirPsiBlackBoxInlineCodegenTest : AbstractFirPsiBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        with(builder) {
-            useInlineHandlers()
-            defaultDirectives {
-                +FirDiagnosticsDirectives.USE_LIGHT_TREE
-            }
-        }
+        builder.useInlineHandlers()
     }
 }
